@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PIXUP BOOTH — Photo Session</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #fafafa;
+    }
+
+    .session-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      width: 90%;
+      max-width: 1600px;
+    }
+
+    .frame-section img {
+      height: 85vh;
+      width: auto;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .camera-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    video {
+      width: 720px;
+      height: 405px; /* Landscape 16:9 */
+      background: #000;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+      transform: scaleX(-1); /* 🔥 Inilah efek mirror */
+    }
+
+    .controls {
+      margin-top: 15px;
+      display: flex;
+      gap: 15px;
+    }
+
+    button {
+      padding: 10px 18px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background: #000;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    select {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="session-container">
+    <div class="frame-section">
+      <img src="frame1.png" alt="Photo Frame" />
+    </div>
+
+    <div class="camera-section">
+      <video id="camera" autoplay playsinline></video>
+      <div class="controls">
+        <select id="cameraSelect"></select>
+        <button id="startCamera">Start Camera</button>
+        <button id="takePhoto">Ambil Foto</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('camera');
+    const cameraSelect = document.getElementById('cameraSelect');
+    const startBtn = document.getElementById('startCamera');
+    const takePhotoBtn = document.getElementById('takePhoto');
+    let stream;
+
+    async function getCameras() {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(device => device.kind === 'videoinput');
+      cameraSelect.innerHTML = '';
+      cameras.forEach((camera, i) => {
+        const option = document.createElement('option');
+        option.value = camera.deviceId;
+        option.text = camera.label || `Camera ${i + 1}`;
+        cameraSelect.appendChild(option);
+      });
+    }
+
+    async function startCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: cameraSelect.value ? { exact: cameraSelect.value } : undefined,
+            width: 1280,
+            height: 720
+          }
+        });
+        video.srcObject = stream;
+      } catch (err) {
+        alert('Gagal mengakses kamera: ' + err.message);
+      }
+    }
+
+    startBtn.addEventListener('click', startCamera);
+    getCameras();
+
+    takePhotoBtn.addEventListener('click', () => {
+      alert("📸 Fitur ambil foto akan diaktifkan setelah kamera berfungsi.");
+    });
+  </script>
+</body>
+</html>

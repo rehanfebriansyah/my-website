@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Select Frame - PIXUP BOOTH</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 50px 20px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+    }
+
+    .frame-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .frame-item {
+      border: 3px solid transparent;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .frame-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .frame-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .frame-item.selected {
+      border-color: #000;
+      transform: scale(1.03);
+    }
+
+    .next-btn {
+      margin-top: 50px;
+      font-size: 1.5rem;
+      padding: 15px 60px;
+      border: 3px solid #000;
+      background: white;
+      color: black;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .next-btn:hover {
+      background-color: #000;
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .next-btn {
+        font-size: 1.2rem;
+        padding: 12px 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Select Your Frame</h1>
+
+  <div class="frame-grid" id="frameGrid">
+    <script>
+      const totalFrames = 10;
+      for (let i = 1; i <= totalFrames; i++) {
+        document.write(`
+          <div class="frame-item" onclick="selectFrame(${i})">
+            <img src="frame${i}.png" alt="Frame ${i}">
+          </div>
+        `);
+      }
+    </script>
+  </div>
+
+  <button class="next-btn" id="nextBtn" onclick="goToPhoto()" disabled>Next</button>
+
+  <script>
+    let selectedFrame = null;
+
+    function selectFrame(index) {
+      document.querySelectorAll('.frame-item').forEach(item => item.classList.remove('selected'));
+      const selected = document.querySelectorAll('.frame-item')[index - 1];
+      selected.classList.add('selected');
+      selectedFrame = `frame${index}.png`;
+      document.getElementById('nextBtn').disabled = false;
+    }
+
+    function goToPhoto() {
+      if (selectedFrame) {
+        localStorage.setItem("selectedFrame", selectedFrame);
+        window.location.href = "photo-session.html";
+      }
+    }
+  </script>
+</body>
+</html>
